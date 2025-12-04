@@ -7,7 +7,7 @@
   <title>Summit Pathfinder Academy - Learn JSONPath+</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsonpath-plus@7.2.0/dist/index-browser-umd.cjs"></script>
+  <script src="https://unpkg.com/jsonpath-plus@7.2.0/dist/index-browser-umd.cjs"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -67,6 +67,17 @@
       </p>
     </div>
 
+    <!-- Mission Objective -->
+    <div class="bg-amber-900/30 border border-amber-700/50 rounded-lg p-4 mb-6">
+      <div class="flex items-start gap-3">
+        <span class="text-xl">🎯</span>
+        <div>
+          <h3 class="font-semibold text-amber-200">Mission Objective</h3>
+          <p id="mission-text" class="text-amber-100/80">Select all the peaks in the mountain data.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Game Area -->
     <div class="grid lg:grid-cols-2 gap-6">
       <!-- Left: Document Viewer -->
@@ -100,8 +111,8 @@
                 class="flex-1 bg-slate-900 border border-slate-600 rounded-lg px-4 py-3 font-mono text-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                 placeholder="$.mountain.peaks[*]" autocomplete="off" spellcheck="false">
               <button id="run-btn"
-                class="px-6 py-3 bg-green-600 hover:bg-green-500 rounded-lg font-semibold transition-colors flex items-center gap-2">
-                <span>🧭</span> Navigate
+                class="px-6 py-3 bg-green-600 hover:bg-green-500 rounded-lg font-semibold transition-colors">
+                Run ▶
               </button>
             </div>
             <div id="error-message" class="hidden mt-2 text-red-400 text-sm"></div>
@@ -118,17 +129,6 @@
           </div>
           <div class="p-4 font-mono text-sm overflow-auto max-h-[200px]">
             <pre id="output-view" class="text-slate-400">Run a query to see results...</pre>
-          </div>
-        </div>
-
-        <!-- Mission Objective -->
-        <div class="bg-amber-900/40 border-2 border-amber-600/60 rounded-xl p-4 shadow-lg">
-          <div class="flex items-start gap-3">
-            <span class="text-2xl">🎯</span>
-            <div class="flex-1">
-              <h3 class="font-bold text-amber-100 text-lg mb-1">Mission Objective</h3>
-              <p id="mission-text" class="text-amber-200 font-medium">Select all the peaks in the mountain data.</p>
-            </div>
           </div>
         </div>
 
