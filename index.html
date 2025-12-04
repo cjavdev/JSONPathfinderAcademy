@@ -81,8 +81,8 @@
     <!-- Game Area -->
     <div class="grid lg:grid-cols-2 gap-6">
       <!-- Left: Document Viewer -->
-      <div class="bg-slate-800 rounded-xl overflow-hidden">
-        <div class="flex items-center justify-between px-4 py-3 bg-slate-700/50 border-b border-slate-600">
+      <div class="bg-slate-800 rounded-xl overflow-hidden flex flex-col">
+        <div class="flex items-center justify-between px-4 py-3 bg-slate-700/50 border-b border-slate-600 flex-shrink-0">
           <h3 class="font-semibold flex items-center gap-2">
             <span>📄</span> Terrain Data
           </h3>
@@ -91,7 +91,7 @@
             <button id="yaml-toggle" class="px-3 py-1 text-sm rounded-md text-slate-400 hover:text-white">YAML</button>
           </div>
         </div>
-        <div class="p-4 font-mono text-sm overflow-auto max-h-[400px]">
+        <div class="p-4 font-mono text-sm overflow-auto flex-1 min-h-0">
           <pre id="document-view" class="whitespace-pre-wrap"></pre>
         </div>
       </div>
