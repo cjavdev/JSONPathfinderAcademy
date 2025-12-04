@@ -233,37 +233,81 @@ class SummitPathfinderGame {
     syntaxHighlightYAML(obj, indent = 0) {
         const yaml = jsyaml.dump(obj, { indent: 2, lineWidth: -1 });
 
-        // Simple syntax highlighting for YAML
+        // Process YAML line by line with syntax highlighting
         return yaml
             .split('\n')
             .map(line => {
-                // Keys (before colon)
-                line = line.replace(/^(\s*)([^:\s-][^:]*?)(:)/,
-                    '$1<span class="yaml-key">$2</span>$3');
+                // Skip empty lines
+                if (!line.trim()) {
+                    return this.escapeHtml(line);
+                }
 
-                // Array markers
-                line = line.replace(/^(\s*)(-)(\s)/,
-                    '$1<span class="yaml-array-marker">$2</span>$3');
+                // Build highlighted line using placeholders to avoid conflicts
+                let result = '';
+                let remaining = line;
 
-                // Strings (quoted)
-                line = line.replace(/"([^"]*)"/,
-                    '<span class="yaml-string">"$1"</span>');
-                line = line.replace(/'([^']*)'/,
-                    '<span class="yaml-string">\'$1\'</span>');
+                // 1. Handle array markers at the start
+                const arrayMatch = remaining.match(/^(\s*)(-)(\s+)/);
+                if (arrayMatch) {
+                    result += this.escapeHtml(arrayMatch[1]);
+                    result += '<span class="yaml-array-marker">-</span>';
+                    result += this.escapeHtml(arrayMatch[3]);
+                    remaining = remaining.substring(arrayMatch[0].length);
+                }
 
-                // Booleans
-                line = line.replace(/:\s*(true|false)\s*$/,
-                    ': <span class="yaml-boolean">$1</span>');
+                // 2. Find key-value pattern
+                const colonIdx = remaining.indexOf(':');
+                if (colonIdx > -1) {
+                    // Extract and highlight key
+                    const beforeColon = remaining.substring(0, colonIdx);
+                    const keyMatch = beforeColon.match(/(\s*)([a-zA-Z_][a-zA-Z0-9_-]*)(\s*)$/);
 
-                // Numbers
-                line = line.replace(/:\s*(-?\d+\.?\d*)\s*$/,
-                    ': <span class="yaml-number">$1</span>');
+                    if (keyMatch) {
+                        // Has a key before colon (works for both regular keys and array item keys)
+                        result += this.escapeHtml(keyMatch[1]);
+                        result += '<span class="yaml-key">' + this.escapeHtml(keyMatch[2]) + '</span>';
+                        if (keyMatch[3]) {
+                            result += this.escapeHtml(keyMatch[3]);
+                        }
+                    } else {
+                        // No key, just add the text before colon
+                        result += this.escapeHtml(beforeColon);
+                    }
 
-                // Null
-                line = line.replace(/:\s*(null|~)\s*$/,
-                    ': <span class="yaml-null">$1</span>');
+                    // Add colon
+                    result += this.escapeHtml(':');
 
-                return line;
+                    // Extract and highlight value
+                    const afterColon = remaining.substring(colonIdx + 1);
+                    const valueMatch = afterColon.match(/^(\s+)(.+?)(\s*)$/);
+
+                    if (valueMatch) {
+                        const valuePart = valueMatch[2].trim();
+                        result += this.escapeHtml(valueMatch[1]); // spaces after colon
+
+                        // Determine value type and highlight
+                        if (/^-?\d+\.?\d*$/.test(valuePart)) {
+                            result += '<span class="yaml-number">' + this.escapeHtml(valuePart) + '</span>';
+                        } else if (/^(true|false)$/.test(valuePart)) {
+                            result += '<span class="yaml-boolean">' + this.escapeHtml(valuePart) + '</span>';
+                        } else if (/^(null|~)$/.test(valuePart)) {
+                            result += '<span class="yaml-null">' + this.escapeHtml(valuePart) + '</span>';
+                        } else {
+                            result += '<span class="yaml-string">' + this.escapeHtml(valuePart) + '</span>';
+                        }
+
+                        if (valueMatch[3]) {
+                            result += this.escapeHtml(valueMatch[3]);
+                        }
+                    } else {
+                        result += this.escapeHtml(afterColon);
+                    }
+                } else {
+                    // No colon found, just escape the remaining line
+                    result += this.escapeHtml(remaining);
+                }
+
+                return result;
             })
             .join('\n');
     }
@@ -284,8 +328,25 @@ class SummitPathfinderGame {
         }
 
         try {
-            // Use jsonpath-plus library
-            const result = JSONPath.JSONPath({
+            // Check if JSONPath library is available and get the function
+            let jsonPathFn;
+
+            if (typeof JSONPath !== 'undefined') {
+                // Try different possible export formats
+                if (typeof JSONPath.JSONPath === 'function') {
+                    jsonPathFn = JSONPath.JSONPath;
+                } else if (typeof JSONPath === 'function') {
+                    jsonPathFn = JSONPath;
+                } else if (typeof JSONPath.default === 'function') {
+                    jsonPathFn = JSONPath.default;
+                }
+            }
+
+            if (typeof jsonPathFn !== 'function') {
+                throw new Error('JSONPath library is not loaded. Please check your internet connection and refresh the page.');
+            }
+
+            const result = jsonPathFn({
                 path: query,
                 json: this.currentLevelData.doc,
                 resultType: 'value'
