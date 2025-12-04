@@ -16,7 +16,6 @@ coverage/
 Thumbs.db
 
 # Build artifacts
-dist/
 build/
 
 # Logs
