@@ -3,7 +3,7 @@
  */
 
 const { JSONPath } = require('jsonpath-plus');
-const { LEVELS, CHAPTERS } = require('./levels.js');
+const { LEVELS, CHAPTERS } = require('../dist/levels.js');
 
 // Create minimal HTML structure before requiring game.js
 document.body.innerHTML = `
@@ -47,7 +47,7 @@ global.CHAPTERS = CHAPTERS;
 global.JSONPath = { JSONPath };
 
 // Import game after DOM and globals setup
-const { SummitPathfinderGame } = require('./game.js');
+const { SummitPathfinderGame } = require('../dist/game.js');
 
 describe('SummitPathfinderGame', () => {
     let game;

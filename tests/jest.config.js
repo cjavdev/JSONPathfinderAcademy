@@ -8,8 +8,8 @@ module.exports = {
     'node_modules/(?!(jsonpath-plus)/)'
   ],
   collectCoverageFrom: [
-    'levels.js',
-    'game.js'
+    '../dist/levels.js',
+    '../dist/game.js'
   ],
   coverageThreshold: {
     global: {
@@ -19,5 +19,5 @@ module.exports = {
       statements: 30
     }
   },
-  setupFilesAfterEnv: ['./jest.setup.js']
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js']
 };

@@ -4,7 +4,7 @@
  */
 
 const { JSONPath } = require('jsonpath-plus');
-const { LEVELS, CHAPTERS } = require('./levels.js');
+const { LEVELS, CHAPTERS } = require('../dist/levels.js');
 
 describe('Level Data Structure', () => {
     test('should have 20 levels', () => {
