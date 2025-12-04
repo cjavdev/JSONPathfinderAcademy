@@ -23,17 +23,35 @@ This project is organized to separate distribution files from test files:
 
 ## Cloudflare Pages Deployment
 
+### Option 1: Using Build Output Directory (Recommended)
+
 1. **Build Settings:**
-   - **Build command:** (leave empty - no build needed)
+   - **Build command:** `npm run build` (or leave empty)
    - **Build output directory:** `dist`
    - **Root directory:** `/` (root of repository)
+   - **Deploy command:** (leave empty - not needed for static sites)
 
 2. **Environment Variables:**
    - None required (this is a static site)
 
-3. **Deployment:**
-   - Cloudflare Pages will serve files from the `dist/` directory
-   - The `package.json` in the root is only for local testing and will be ignored by Cloudflare
+### Option 2: Using Wrangler Deploy Command
+
+If you have a deploy command configured (`npx wrangler deploy`), the `wrangler.jsonc` file in the root will tell Wrangler where to find the assets.
+
+1. **Build Settings:**
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+   - **Deploy command:** `npx wrangler deploy` (optional - only if you want to use Wrangler)
+
+2. **Configuration:**
+   - The `wrangler.jsonc` file is already configured to use `./dist` as the assets directory
+   - No additional configuration needed
+
+### Notes
+
+- Cloudflare Pages will serve files from the `dist/` directory
+- The `package.json` in the root is only for local testing
+- The `wrangler.jsonc` file is included to support Wrangler-based deployments if needed
 
 ## Local Development
 
