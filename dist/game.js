@@ -59,6 +59,11 @@ class SummitPathfinderGame {
         this.levelGrid = document.getElementById('level-grid');
         this.closeModalBtn = document.getElementById('close-modal-btn');
 
+        // Cheatsheet modal
+        this.cheatsheetModal = document.getElementById('cheatsheet-modal');
+        this.cheatsheetBtn = document.getElementById('cheatsheet-btn');
+        this.closeCheatsheetBtn = document.getElementById('close-cheatsheet-btn');
+
         // Hints
         this.hintDisplay = document.getElementById('hint-display');
         this.hintText = document.getElementById('hint-text');
@@ -103,15 +108,36 @@ class SummitPathfinderGame {
             if (e.target === this.levelModal) this.closeLevelModal();
         });
 
+        // Cheatsheet modal
+        this.cheatsheetBtn.addEventListener('click', () => this.openCheatsheet());
+        this.closeCheatsheetBtn.addEventListener('click', () => this.closeCheatsheet());
+        this.cheatsheetModal.addEventListener('click', (e) => {
+            if (e.target === this.cheatsheetModal) this.closeCheatsheet();
+        });
+
         // Sandbox mode
         this.sandboxBtn.addEventListener('click', () => this.toggleSandbox());
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') this.closeLevelModal();
+            if (e.key === 'Escape') {
+                this.closeLevelModal();
+                this.closeCheatsheet();
+            }
             if (e.ctrlKey || e.metaKey) {
                 if (e.key === 'ArrowRight') { e.preventDefault(); this.nextLevel(); }
                 if (e.key === 'ArrowLeft') { e.preventDefault(); this.prevLevel(); }
+            }
+            // Open cheatsheet when ? is typed (unless typing in query input with content)
+            if (e.key === '?') {
+                const isQueryInputFocused = document.activeElement === this.queryInput;
+                const queryHasContent = this.queryInput.value.length > 0;
+
+                // Only open if not typing in query input, or query input is empty
+                if (!isQueryInputFocused || !queryHasContent) {
+                    e.preventDefault();
+                    this.openCheatsheet();
+                }
             }
         });
     }
@@ -511,6 +537,14 @@ class SummitPathfinderGame {
 
     closeLevelModal() {
         this.levelModal.classList.add('hidden');
+    }
+
+    openCheatsheet() {
+        this.cheatsheetModal.classList.remove('hidden');
+    }
+
+    closeCheatsheet() {
+        this.cheatsheetModal.classList.add('hidden');
     }
 
     renderLevelGrid() {

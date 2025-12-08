@@ -31,6 +31,10 @@
           title="Free practice mode - experiment with JSONPath queries on sample data without level restrictions">
           🧪 Sandbox
         </button>
+        <button id="cheatsheet-btn" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition-colors"
+          title="JSONPath+ Cheatsheet - Press ? anytime">
+          📖 Help <kbd class="ml-1 px-1.5 py-0.5 bg-slate-600 rounded text-xs">?</kbd>
+        </button>
       </div>
     </div>
   </header>
@@ -47,6 +51,218 @@
       <div class="p-6 overflow-y-auto max-h-[60vh]">
         <div id="level-grid" class="grid grid-cols-5 gap-3">
           <!-- Levels populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cheatsheet Modal -->
+  <div id="cheatsheet-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-800 rounded-xl max-w-4xl w-full max-h-[85vh] overflow-hidden">
+      <div class="p-6 border-b border-slate-700">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-bold">📖 JSONPath+ Cheatsheet</h2>
+          <button id="close-cheatsheet-btn" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+        </div>
+      </div>
+      <div class="p-6 overflow-y-auto max-h-[70vh] cheatsheet-content">
+        <!-- Basic Syntax -->
+        <section class="mb-6">
+          <h3 class="text-lg font-semibold text-amber-400 mb-3 flex items-center gap-2">
+            <span>🧭</span> Basic Syntax
+          </h3>
+          <div class="grid gap-2 text-sm">
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$</code>
+              <span class="text-slate-300">Root element (start every query with this)</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$.store</code>
+              <span class="text-slate-300">Dot notation - access child property</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$['store']</code>
+              <span class="text-slate-300">Bracket notation - same as dot notation</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$.store.book</code>
+              <span class="text-slate-300">Chain properties with dots</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Array Access -->
+        <section class="mb-6">
+          <h3 class="text-lg font-semibold text-emerald-400 mb-3 flex items-center gap-2">
+            <span>📍</span> Array Access
+          </h3>
+          <div class="grid gap-2 text-sm">
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[0]</code>
+              <span class="text-slate-300">First element (zero-indexed)</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[-1]</code>
+              <span class="text-slate-300">Last element</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[0,2]</code>
+              <span class="text-slate-300">Elements at index 0 and 2</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[0:3]</code>
+              <span class="text-slate-300">Slice: elements 0, 1, 2 (end exclusive)</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[::2]</code>
+              <span class="text-slate-300">Every 2nd element</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[*]</code>
+              <span class="text-slate-300">All elements in array</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Wildcards & Recursion -->
+        <section class="mb-6">
+          <h3 class="text-lg font-semibold text-blue-400 mb-3 flex items-center gap-2">
+            <span>🔍</span> Wildcards & Deep Search
+          </h3>
+          <div class="grid gap-2 text-sm">
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">*</code>
+              <span class="text-slate-300">Wildcard - matches any property or element</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$.store.*</code>
+              <span class="text-slate-300">All children of store</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">..</code>
+              <span class="text-slate-300">Recursive descent - search all levels</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$..name</code>
+              <span class="text-slate-300">All 'name' properties anywhere in document</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$..[0]</code>
+              <span class="text-slate-300">First element of all arrays</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Filters -->
+        <section class="mb-6">
+          <h3 class="text-lg font-semibold text-purple-400 mb-3 flex items-center gap-2">
+            <span>🎯</span> Filters
+          </h3>
+          <div class="grid gap-2 text-sm">
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[?()]</code>
+              <span class="text-slate-300">Filter expression syntax</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">@</code>
+              <span class="text-slate-300">Current element in filter</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[?(@.price)]</code>
+              <span class="text-slate-300">Elements that have a 'price' property</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[?(@.price > 10)]</code>
+              <span class="text-slate-300">Elements where price > 10</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[?(@.name == "foo")]</code>
+              <span class="text-slate-300">Elements where name equals "foo"</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Comparison Operators -->
+        <section class="mb-6">
+          <h3 class="text-lg font-semibold text-rose-400 mb-3 flex items-center gap-2">
+            <span>⚖️</span> Comparison Operators
+          </h3>
+          <div class="grid gap-2 text-sm">
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">==</code>
+              <span class="text-slate-300">Equal to</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">!=</code>
+              <span class="text-slate-300">Not equal to</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">&lt; &gt; &lt;= &gt;=</code>
+              <span class="text-slate-300">Less than, greater than, etc.</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">=~</code>
+              <span class="text-slate-300">Regex match (e.g., <code>=~ /pattern/i</code>)</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Boolean Operators -->
+        <section class="mb-6">
+          <h3 class="text-lg font-semibold text-cyan-400 mb-3 flex items-center gap-2">
+            <span>🔗</span> Boolean Operators
+          </h3>
+          <div class="grid gap-2 text-sm">
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">&&</code>
+              <span class="text-slate-300">Logical AND</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">||</code>
+              <span class="text-slate-300">Logical OR</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">!</code>
+              <span class="text-slate-300">Logical NOT</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[?(@.a && @.b)]</code>
+              <span class="text-slate-300">Both conditions must be true</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">[?(@.a || @.b)]</code>
+              <span class="text-slate-300">Either condition can be true</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Common Examples -->
+        <section class="mb-4">
+          <h3 class="text-lg font-semibold text-orange-400 mb-3 flex items-center gap-2">
+            <span>💡</span> Common Patterns
+          </h3>
+          <div class="grid gap-2 text-sm">
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$.items[*].name</code>
+              <span class="text-slate-300">Get 'name' from all items</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$.items[?(@.active==true)]</code>
+              <span class="text-slate-300">Filter active items</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$..items[?(@.qty>5)]</code>
+              <span class="text-slate-300">Find items with qty > 5 anywhere</span>
+            </div>
+            <div class="cheatsheet-row">
+              <code class="cheatsheet-code">$.data[0:5]</code>
+              <span class="text-slate-300">First 5 elements of data array</span>
+            </div>
+          </div>
+        </section>
+
+        <div class="mt-6 pt-4 border-t border-slate-700 text-sm text-slate-400 text-center">
+          Press <kbd class="px-2 py-1 bg-slate-700 rounded text-slate-200">?</kbd> anytime to open this cheatsheet
         </div>
       </div>
     </div>

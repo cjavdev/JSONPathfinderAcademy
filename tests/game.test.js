@@ -29,9 +29,12 @@ document.body.innerHTML = `
     <button id="yaml-toggle"></button>
     <button id="level-select-btn"></button>
     <button id="sandbox-btn"></button>
+    <button id="cheatsheet-btn"></button>
     <div id="level-modal" class="hidden"></div>
     <div id="level-grid"></div>
     <button id="close-modal-btn"></button>
+    <div id="cheatsheet-modal" class="hidden"></div>
+    <button id="close-cheatsheet-btn"></button>
     <div id="hint-display" class="hidden"></div>
     <div id="hint-text"></div>
     <div id="hint-count"></div>
@@ -303,6 +306,19 @@ describe('SummitPathfinderGame', () => {
             game.openLevelModal();
             game.closeLevelModal();
             expect(document.getElementById('level-modal').classList.contains('hidden')).toBe(true);
+        });
+    });
+
+    describe('Cheatsheet Modal', () => {
+        test('should open cheatsheet modal', () => {
+            game.openCheatsheet();
+            expect(document.getElementById('cheatsheet-modal').classList.contains('hidden')).toBe(false);
+        });
+
+        test('should close cheatsheet modal', () => {
+            game.openCheatsheet();
+            game.closeCheatsheet();
+            expect(document.getElementById('cheatsheet-modal').classList.contains('hidden')).toBe(true);
         });
     });
 });
