@@ -9,6 +9,9 @@ const { LEVELS, CHAPTERS } = require('../dist/levels.js');
 document.body.innerHTML = `
     <input type="text" id="query-input" />
     <div id="document-view"></div>
+    <div id="document-view-container"></div>
+    <div id="document-edit-container" class="hidden"></div>
+    <textarea id="document-editor"></textarea>
     <div id="output-view"></div>
     <div id="expected-view"></div>
     <div id="error-message" class="hidden"></div>
@@ -19,6 +22,8 @@ document.body.innerHTML = `
     <div id="level-description"></div>
     <div id="mission-text"></div>
     <div id="current-level-display"></div>
+    <span id="terrain-data-label">Terrain Data</span>
+    <span id="editor-status"></span>
     <button id="run-btn"></button>
     <button id="hint-btn"></button>
     <button id="solution-btn"></button>
@@ -30,6 +35,9 @@ document.body.innerHTML = `
     <button id="level-select-btn"></button>
     <button id="sandbox-btn"></button>
     <button id="cheatsheet-btn"></button>
+    <button id="edit-data-btn" class="hidden"></button>
+    <button id="apply-data-btn"></button>
+    <button id="cancel-edit-btn"></button>
     <div id="level-modal" class="hidden"></div>
     <div id="level-grid"></div>
     <button id="close-modal-btn"></button>
@@ -264,6 +272,35 @@ describe('SummitPathfinderGame', () => {
         test('should update chapter name in sandbox mode', () => {
             game.toggleSandbox();
             expect(document.getElementById('chapter-name').textContent).toBe('Sandbox');
+        });
+
+        test('should show edit button in sandbox mode', () => {
+            game.toggleSandbox();
+            expect(document.getElementById('edit-data-btn').classList.contains('hidden')).toBe(false);
+        });
+
+        test('should hide edit button when exiting sandbox mode', () => {
+            game.toggleSandbox();
+            game.toggleSandbox();
+            expect(document.getElementById('edit-data-btn').classList.contains('hidden')).toBe(true);
+        });
+
+        test('should open editor in sandbox mode', () => {
+            game.toggleSandbox();
+            game.openEditor();
+            expect(document.getElementById('document-edit-container').classList.contains('hidden')).toBe(false);
+        });
+
+        test('should close editor', () => {
+            game.toggleSandbox();
+            game.openEditor();
+            game.closeEditor();
+            expect(document.getElementById('document-edit-container').classList.contains('hidden')).toBe(true);
+        });
+
+        test('should not open editor when not in sandbox mode', () => {
+            game.openEditor();
+            expect(document.getElementById('document-edit-container').classList.contains('hidden')).toBe(true);
         });
     });
 

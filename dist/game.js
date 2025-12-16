@@ -72,6 +72,16 @@ class SummitPathfinderGame {
         // Success message
         this.successMessage = document.getElementById('success-message');
         this.expectedContainer = document.getElementById('expected-container');
+
+        // Sandbox editor elements
+        this.editDataBtn = document.getElementById('edit-data-btn');
+        this.documentViewContainer = document.getElementById('document-view-container');
+        this.documentEditContainer = document.getElementById('document-edit-container');
+        this.documentEditor = document.getElementById('document-editor');
+        this.applyDataBtn = document.getElementById('apply-data-btn');
+        this.cancelEditBtn = document.getElementById('cancel-edit-btn');
+        this.editorStatus = document.getElementById('editor-status');
+        this.terrainDataLabel = document.getElementById('terrain-data-label');
     }
 
     bindEvents() {
@@ -117,6 +127,14 @@ class SummitPathfinderGame {
 
         // Sandbox mode
         this.sandboxBtn.addEventListener('click', () => this.toggleSandbox());
+
+        // Sandbox editor
+        this.editDataBtn.addEventListener('click', () => this.openEditor());
+        this.applyDataBtn.addEventListener('click', () => this.applyCustomData());
+        this.cancelEditBtn.addEventListener('click', () => this.closeEditor());
+
+        // Live validation as user types in editor
+        this.documentEditor.addEventListener('input', () => this.validateEditorContent());
 
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
@@ -547,6 +565,102 @@ class SummitPathfinderGame {
         this.cheatsheetModal.classList.add('hidden');
     }
 
+    openEditor() {
+        if (!this.sandboxMode) return;
+
+        // Populate editor with current data in the selected format
+        if (this.viewMode === 'json') {
+            this.documentEditor.value = JSON.stringify(this.currentLevelData.doc, null, 2);
+        } else {
+            this.documentEditor.value = jsyaml.dump(this.currentLevelData.doc, { indent: 2, lineWidth: -1 });
+        }
+
+        // Show editor, hide viewer
+        this.documentViewContainer.classList.add('hidden');
+        this.documentEditContainer.classList.remove('hidden');
+        this.editDataBtn.textContent = '📄 View';
+        this.editorStatus.textContent = '';
+        this.editorStatus.className = 'text-sm text-slate-400';
+
+        // Focus editor
+        this.documentEditor.focus();
+    }
+
+    closeEditor() {
+        // Show viewer, hide editor
+        this.documentViewContainer.classList.remove('hidden');
+        this.documentEditContainer.classList.add('hidden');
+        this.editDataBtn.textContent = '✏️ Edit';
+    }
+
+    validateEditorContent() {
+        const content = this.documentEditor.value.trim();
+
+        if (!content) {
+            this.editorStatus.textContent = '';
+            this.editorStatus.className = 'text-sm text-slate-400';
+            return null;
+        }
+
+        // Try to parse as JSON first, then YAML
+        let parsed = null;
+        let format = null;
+
+        try {
+            parsed = JSON.parse(content);
+            format = 'json';
+            this.editorStatus.textContent = '✓ Valid JSON';
+            this.editorStatus.className = 'text-sm text-slate-400 success';
+        } catch (jsonError) {
+            try {
+                parsed = jsyaml.load(content);
+                if (parsed !== null && typeof parsed === 'object') {
+                    format = 'yaml';
+                    this.editorStatus.textContent = '✓ Valid YAML';
+                    this.editorStatus.className = 'text-sm text-slate-400 success';
+                } else {
+                    throw new Error('Not a valid object');
+                }
+            } catch (yamlError) {
+                this.editorStatus.textContent = '⚠ Invalid JSON/YAML';
+                this.editorStatus.className = 'text-sm error';
+                return null;
+            }
+        }
+
+        return { parsed, format };
+    }
+
+    applyCustomData() {
+        const result = this.validateEditorContent();
+
+        if (!result) {
+            this.editorStatus.textContent = '⚠ Please enter valid JSON or YAML';
+            this.editorStatus.className = 'text-sm error';
+            return;
+        }
+
+        // Update the document
+        this.currentLevelData.doc = result.parsed;
+
+        // Re-render the document view
+        this.renderDocument(this.currentLevelData.doc);
+
+        // Close editor
+        this.closeEditor();
+
+        // Clear any previous query results
+        this.outputView.textContent = 'Run a query to see results...';
+        this.outputView.className = 'text-slate-400';
+        this.matchCount.textContent = '';
+
+        // Update label to show custom data
+        this.terrainDataLabel.textContent = 'Custom Data';
+
+        // Show success toast
+        this.showToast('Custom data loaded!', 'success');
+    }
+
     renderLevelGrid() {
         this.levelGrid.innerHTML = '';
 
@@ -654,7 +768,7 @@ class SummitPathfinderGame {
             this.levelNumber.textContent = '∞';
             this.levelTitle.textContent = 'Free Exploration';
             this.levelDescription.textContent = '"Experiment freely with any JSON document."';
-            this.missionText.textContent = 'Try any JSONPath query on the sample data.';
+            this.missionText.textContent = 'Try any JSONPath query, or click Edit to paste your own data.';
 
             this.renderDocument(this.currentLevelData.doc);
             this.expectedContainer.classList.add('hidden');
@@ -662,10 +776,20 @@ class SummitPathfinderGame {
             this.queryInput.placeholder = '$.expedition.teams[*].name';
             this.outputView.textContent = 'Run a query to see results...';
 
+            // Show edit button and update label
+            this.editDataBtn.classList.remove('hidden');
+            this.terrainDataLabel.textContent = 'Sample Data';
+
         } else {
             this.sandboxBtn.classList.remove('bg-amber-500');
             this.sandboxBtn.textContent = '🧪 Sandbox';
             this.expectedContainer.classList.remove('hidden');
+
+            // Hide edit button, reset label, and close editor if open
+            this.editDataBtn.classList.add('hidden');
+            this.terrainDataLabel.textContent = 'Terrain Data';
+            this.closeEditor();
+
             this.loadLevel(this.currentLevel);
         }
     }

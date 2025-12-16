@@ -300,15 +300,40 @@
       <div class="bg-slate-800 rounded-xl overflow-hidden flex flex-col">
         <div class="flex items-center justify-between px-4 py-3 bg-slate-700/50 border-b border-slate-600 flex-shrink-0">
           <h3 class="font-semibold flex items-center gap-2">
-            <span>📄</span> Terrain Data
+            <span>📄</span> <span id="terrain-data-label">Terrain Data</span>
           </h3>
-          <div class="flex items-center gap-1 bg-slate-800 rounded-lg p-1">
-            <button id="json-toggle" class="px-3 py-1 text-sm rounded-md bg-blue-600 text-white">JSON</button>
-            <button id="yaml-toggle" class="px-3 py-1 text-sm rounded-md text-slate-400 hover:text-white">YAML</button>
+          <div class="flex items-center gap-2">
+            <!-- Edit button (sandbox only) -->
+            <button id="edit-data-btn" class="hidden px-3 py-1 text-sm rounded-md bg-slate-600 hover:bg-slate-500 text-slate-200 transition-colors">
+              ✏️ Edit
+            </button>
+            <div class="flex items-center gap-1 bg-slate-800 rounded-lg p-1">
+              <button id="json-toggle" class="px-3 py-1 text-sm rounded-md bg-blue-600 text-white">JSON</button>
+              <button id="yaml-toggle" class="px-3 py-1 text-sm rounded-md text-slate-400 hover:text-white">YAML</button>
+            </div>
           </div>
         </div>
-        <div class="p-4 font-mono text-sm overflow-auto flex-1 min-h-0">
+        <!-- Read-only view -->
+        <div id="document-view-container" class="p-4 font-mono text-sm overflow-auto flex-1 min-h-0">
           <pre id="document-view" class="whitespace-pre-wrap"></pre>
+        </div>
+        <!-- Editable textarea (sandbox only) -->
+        <div id="document-edit-container" class="hidden flex-1 min-h-0 flex flex-col">
+          <textarea id="document-editor"
+            class="flex-1 w-full bg-slate-900 text-slate-100 font-mono text-sm p-4 resize-none focus:outline-none"
+            placeholder="Paste your JSON or YAML here..."
+            spellcheck="false"></textarea>
+          <div class="px-4 py-3 bg-slate-700/50 border-t border-slate-600 flex items-center justify-between">
+            <span id="editor-status" class="text-sm text-slate-400"></span>
+            <div class="flex gap-2">
+              <button id="cancel-edit-btn" class="px-4 py-2 text-sm rounded-md bg-slate-600 hover:bg-slate-500 transition-colors">
+                Cancel
+              </button>
+              <button id="apply-data-btn" class="px-4 py-2 text-sm rounded-md bg-emerald-600 hover:bg-emerald-500 transition-colors">
+                Apply Data
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -406,6 +431,9 @@
     <p class="mt-1">
       <a href="https://github.com/json-path/JsonPath" target="_blank" class="text-blue-400 hover:underline">JSONPath
         Reference</a>
+    </p>
+    <p class="mt-4 px-4 py-2 bg-slate-800/50 rounded-lg inline-block">
+      💡 JSONPath+ is especially useful for <a href="https://www.stainless.com/docs/reference/transforms?utm_source=jsonpathacademy" target="_blank" class="text-amber-400 hover:underline">Stainless transforms</a>
     </p>
   </footer>
 
